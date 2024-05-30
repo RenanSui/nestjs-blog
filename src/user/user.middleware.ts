@@ -5,7 +5,7 @@ import { jwtVerify } from 'src/lib/jwt'
 import { UserService } from 'src/user/user.service'
 
 @Injectable()
-export class AuthMiddleware implements NestMiddleware {
+export class UserMiddleware implements NestMiddleware {
   // eslint-disable-next-line no-useless-constructor
   constructor(private readonly userService: UserService) {}
 

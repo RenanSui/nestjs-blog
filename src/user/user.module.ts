@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { DatabaseModule } from 'src/database/database.module'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
-import { AuthMiddleware } from 'src/middlewares/authMiddleware'
+import { UserMiddleware } from './user.middleware'
 
 @Module({
   imports: [DatabaseModule],
@@ -11,6 +11,6 @@ import { AuthMiddleware } from 'src/middlewares/authMiddleware'
 })
 export class UserModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('user')
+    consumer.apply(UserMiddleware).forRoutes('user')
   }
 }
