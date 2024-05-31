@@ -19,6 +19,11 @@ export class ProfileController {
     return this.profileService.findMe(req, res)
   }
 
+  @Get()
+  findAll() {
+    return this.profileService.findAll()
+  }
+
   // @Get()
   // findAll() {
   //   return this.profileService.findAll()

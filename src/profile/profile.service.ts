@@ -14,6 +14,10 @@ export class ProfileService {
     return this.databaseService.profile.create({ data: createProfileDto })
   }
 
+  findAll() {
+    return this.databaseService.profile.findMany()
+  }
+
   findMe(
     { context: { profile } }: ContextRequest<ProfileRequest>,
     res: Response,
