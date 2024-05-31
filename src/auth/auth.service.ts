@@ -5,12 +5,17 @@ import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { comparePassword } from 'src/lib/auth'
 import { createHash } from 'src/lib/hash'
 import { jwtSign } from 'src/lib/jwt'
+import { ProfileService } from 'src/profile/profile.service'
 import { UserService } from 'src/user/user.service'
+import { generateFromEmail, generateUsername } from 'unique-username-generator'
 
 @Injectable()
 export class AuthService {
   // eslint-disable-next-line no-useless-constructor
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly profileService: ProfileService,
+  ) {}
 
   async login({ email, password }: Prisma.UserCreateInput, res: Response) {
     try {
@@ -62,8 +67,15 @@ export class AuthService {
         })
       }
 
-      const { accessToken } = jwtSign(user.id)
+      await this.profileService.create({
+        name: generateUsername(),
+        username: `${generateUsername()}-${generateFromEmail(user.email, 4)}`,
+        user: { connect: { id: user.id } },
+        bio: '',
+        image: '',
+      })
 
+      const { accessToken } = jwtSign(user.id)
       return res.status(StatusCodes.OK).json({
         data: { accessToken },
         message: [ReasonPhrases.OK],
