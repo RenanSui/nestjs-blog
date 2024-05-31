@@ -49,7 +49,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async register(@Body() CreateUserDto: AuthRegisterDto, @Res() res: Response) {
     try {
-      const accessToken = await this.authService.register(CreateUserDto)
+      const { accessToken, user } =
+        await this.authService.register(CreateUserDto)
+
+      if (user) {
+        return res.status(StatusCodes.CONFLICT).json({
+          message: [ReasonPhrases.CONFLICT],
+          status: StatusCodes.CONFLICT,
+        })
+      }
 
       if (!accessToken) {
         return res.status(StatusCodes.NOT_FOUND).json({

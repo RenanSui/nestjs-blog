@@ -30,7 +30,7 @@ export class AuthService {
 
   async register({ email, password }: Prisma.UserCreateInput) {
     const userByEmail = await this.userService.findByEmail(email)
-    if (!userByEmail) return null
+    if (userByEmail) return { user: userByEmail }
 
     const hashedPassword = await createHash(password)
 
@@ -50,6 +50,6 @@ export class AuthService {
     if (!profile) return null
 
     const { accessToken } = jwtSign(user.id)
-    return accessToken
+    return { accessToken }
   }
 }
