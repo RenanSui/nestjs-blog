@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { Response } from 'express'
-import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { DatabaseService } from 'src/database/database.service'
-import { ContextRequest, ProfileRequest } from 'src/types/request'
 
 @Injectable()
 export class ProfileService {
@@ -16,24 +13,6 @@ export class ProfileService {
 
   findAll() {
     return this.databaseService.profile.findMany()
-  }
-
-  findMe(
-    { context: { profile } }: ContextRequest<ProfileRequest>,
-    res: Response,
-  ) {
-    if (!profile) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: [ReasonPhrases.NOT_FOUND],
-        status: StatusCodes.NOT_FOUND,
-      })
-    }
-
-    return res.status(StatusCodes.OK).json({
-      data: { ...profile },
-      message: [ReasonPhrases.OK],
-      status: StatusCodes.OK,
-    })
   }
 
   findByUserId(userId: string) {

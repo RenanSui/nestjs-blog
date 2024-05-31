@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { Response } from 'express'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { ContextRequest, ProfileRequest } from 'src/types/request'
 import { ProfileService } from './profile.service'
 
@@ -15,8 +16,22 @@ export class ProfileController {
   }
 
   @Get('/me')
-  findMe(@Req() req: ContextRequest<ProfileRequest>, @Res() res: Response) {
-    return this.profileService.findMe(req, res)
+  findMe(
+    @Req() { context: { profile } }: ContextRequest<ProfileRequest>,
+    @Res() res: Response,
+  ) {
+    if (!profile) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: [ReasonPhrases.NOT_FOUND],
+        status: StatusCodes.NOT_FOUND,
+      })
+    }
+
+    return res.status(StatusCodes.OK).json({
+      data: { ...profile },
+      message: [ReasonPhrases.OK],
+      status: StatusCodes.OK,
+    })
   }
 
   @Get()
