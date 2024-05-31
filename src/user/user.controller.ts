@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common'
 import { Role } from '@prisma/client'
 import { Response } from 'express'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { ContextRequest, UserRequest } from 'src/types/request'
 import { UserService } from './user.service'
 
@@ -11,7 +12,20 @@ export class UserController {
 
   @Get('/me')
   findMe(@Req() req: ContextRequest<UserRequest>, @Res() res: Response) {
-    return this.userService.findMe(req, res)
+    const user = req.context.user
+
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: [ReasonPhrases.NOT_FOUND],
+        status: StatusCodes.NOT_FOUND,
+      })
+    }
+
+    return res.status(StatusCodes.OK).json({
+      data: { ...user },
+      message: [ReasonPhrases.OK],
+      status: StatusCodes.OK,
+    })
   }
 
   @Get()
