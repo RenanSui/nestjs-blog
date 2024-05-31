@@ -1,7 +1,5 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { Response } from 'express'
-import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { comparePassword } from 'src/lib/auth'
 import { createHash } from 'src/lib/hash'
 import { jwtSign } from 'src/lib/jwt'
@@ -17,75 +15,41 @@ export class AuthService {
     private readonly profileService: ProfileService,
   ) {}
 
-  async login({ email, password }: Prisma.UserCreateInput, res: Response) {
-    try {
-      const userByEmail = await this.userService.findByEmail(email)
-      const isPasswordEqual = comparePassword(password, userByEmail.password)
+  async login({ email, password }: Prisma.UserCreateInput) {
+    const userByEmail = await this.userService.findByEmail(email)
+    if (!userByEmail) return null
 
-      if (!userByEmail || !isPasswordEqual) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          message: [ReasonPhrases.NOT_FOUND],
-          status: StatusCodes.NOT_FOUND,
-        })
-      }
+    const isPasswordEqual = comparePassword(password, userByEmail.password)
+    if (!isPasswordEqual) return null
 
-      const { accessToken } = jwtSign(userByEmail.id)
+    const { accessToken } = jwtSign(userByEmail.id)
+    if (!accessToken) return null
 
-      return res.status(StatusCodes.OK).json({
-        data: { accessToken },
-        message: [ReasonPhrases.OK],
-        status: StatusCodes.OK,
-      })
-    } catch (error) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: [ReasonPhrases.BAD_REQUEST],
-        status: StatusCodes.BAD_REQUEST,
-      })
-    }
+    return accessToken
   }
 
-  async register({ email, password }: Prisma.UserCreateInput, res: Response) {
-    try {
-      const userByEmail = await this.userService.findByEmail(email)
-      if (userByEmail) {
-        return res.status(HttpStatus.CONFLICT).json({
-          message: [ReasonPhrases.CONFLICT],
-          status: StatusCodes.CONFLICT,
-        })
-      }
+  async register({ email, password }: Prisma.UserCreateInput) {
+    const userByEmail = await this.userService.findByEmail(email)
+    if (!userByEmail) return null
 
-      const hashedPassword = await createHash(password)
-      const user = await this.userService.create({
-        email,
-        password: hashedPassword,
-      })
+    const hashedPassword = await createHash(password)
 
-      if (!user) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          message: [ReasonPhrases.NOT_FOUND],
-          status: StatusCodes.NOT_FOUND,
-        })
-      }
+    const user = await this.userService.create({
+      email,
+      password: hashedPassword,
+    })
+    if (!user) return null
 
-      await this.profileService.create({
-        name: generateUsername(),
-        username: `${generateUsername()}-${generateFromEmail(user.email, 4)}`,
-        user: { connect: { id: user.id } },
-        bio: '',
-        image: '',
-      })
+    const profile = await this.profileService.create({
+      name: generateUsername(),
+      username: `${generateUsername()}-${generateFromEmail(user.email, 4)}`,
+      user: { connect: { id: user.id } },
+      bio: '',
+      image: '',
+    })
+    if (!profile) return null
 
-      const { accessToken } = jwtSign(user.id)
-      return res.status(StatusCodes.OK).json({
-        data: { accessToken },
-        message: [ReasonPhrases.OK],
-        status: StatusCodes.OK,
-      })
-    } catch (error) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: [ReasonPhrases.BAD_REQUEST],
-        status: StatusCodes.BAD_REQUEST,
-      })
-    }
+    const { accessToken } = jwtSign(user.id)
+    return accessToken
   }
 }

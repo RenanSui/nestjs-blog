@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { AuthService } from './auth.service'
 import { AuthLoginDto } from './dto/auth-login.dto'
 import { AuthRegisterDto } from './dto/auth-register.dto'
@@ -20,13 +21,53 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  login(@Body() loginDto: AuthLoginDto, @Res() res: Response) {
-    return this.authService.login(loginDto, res)
+  async login(@Body() loginDto: AuthLoginDto, @Res() res: Response) {
+    try {
+      const accessToken = await this.authService.login(loginDto)
+
+      if (!accessToken) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
+      return res.status(StatusCodes.OK).json({
+        data: { accessToken },
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
   }
 
   @Post('register')
   @HttpCode(HttpStatus.OK)
   async register(@Body() CreateUserDto: AuthRegisterDto, @Res() res: Response) {
-    return this.authService.register(CreateUserDto, res)
+    try {
+      const accessToken = await this.authService.register(CreateUserDto)
+
+      if (!accessToken) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
+      return res.status(StatusCodes.OK).json({
+        data: { accessToken },
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
   }
 }
