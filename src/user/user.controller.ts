@@ -1,15 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Query,
-  Req,
-  Res,
-} from '@nestjs/common'
-import { Prisma, Role } from '@prisma/client'
+import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common'
+import { Role } from '@prisma/client'
 import { Response } from 'express'
 import { ContextRequest, UserRequest } from 'src/types/request'
 import { UserService } from './user.service'
@@ -34,16 +24,16 @@ export class UserController {
     return this.userService.findOne(id)
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: Prisma.UserUpdateInput,
-  ) {
-    return this.userService.update(id, updateUserDto)
-  }
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateUserDto: Prisma.UserUpdateInput,
+  // ) {
+  //   return this.userService.update(id, updateUserDto)
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id)
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(id)
+  // }
 }
