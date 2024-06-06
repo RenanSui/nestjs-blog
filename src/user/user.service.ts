@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Prisma, Role } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { DatabaseService } from 'src/database/database.service'
 
 @Injectable()
@@ -9,14 +9,6 @@ export class UserService {
 
   create(createUserDto: Prisma.UserCreateInput) {
     return this.databaseService.user.create({ data: createUserDto })
-  }
-
-  findAll(role?: Role) {
-    if (role) {
-      return this.databaseService.user.findMany({ where: { role } })
-    }
-
-    return this.databaseService.user.findMany()
   }
 
   findOne(id: string) {
