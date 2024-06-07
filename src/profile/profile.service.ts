@@ -11,12 +11,12 @@ export class ProfileService {
     return this.databaseService.profile.create({ data: createProfileDto })
   }
 
-  findAll() {
-    return this.databaseService.profile.findMany()
-  }
-
   findByUserId(userId: string) {
     return this.databaseService.profile.findUnique({ where: { userId } })
+  }
+
+  findByUsername(username: string) {
+    return this.databaseService.profile.findUnique({ where: { username } })
   }
 
   // findAll() {

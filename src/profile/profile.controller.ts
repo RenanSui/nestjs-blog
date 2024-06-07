@@ -35,8 +35,30 @@ export class ProfileController {
   }
 
   @Get()
-  findAll() {
-    return this.profileService.findAll()
+  async findByUsername(
+    @Body() { username }: Pick<Prisma.ProfileCreateInput, 'username'>,
+    @Res() res: Response,
+  ) {
+    try {
+      const profile = await this.profileService.findByUsername(username)
+      if (!profile) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
+      return res.status(StatusCodes.OK).json({
+        data: { ...profile },
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
   }
 
   // @Get()
