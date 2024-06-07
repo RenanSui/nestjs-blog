@@ -1,27 +1,38 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
+import { DatabaseService } from 'src/database/database.service'
 
 @Injectable()
 export class PostService {
-  create(createPostDto: Prisma.PostCreateInput) {
-    console.log(createPostDto)
-    return 'This action adds a new post'
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  create(createPostDto: Prisma.PostCreateInput, user: Prisma.UserCreateInput) {
+    return this.databaseService.post.create({
+      data: { ...createPostDto, author: { connect: { id: user.id } } },
+    })
   }
 
   findAll() {
-    return `This action returns all post`
+    return this.databaseService.post.findMany()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`
+  findById(id: string) {
+    return this.databaseService.post.findUnique({ where: { id } })
   }
 
-  update(id: number, updatePostDto: Prisma.PostUpdateInput) {
-    console.log(updatePostDto)
-    return `This action updates a #${id} post`
+  postByUserId(userId: string) {
+    return this.databaseService.post.findMany({ where: { authorId: userId } })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`
-  }
+  // update(id: string, updatePostDto: Prisma.PostUpdateInput) {
+  //   return this.databaseService.post.update({
+  //     data: updatePostDto,
+  //     where: { id },
+  //   })
+  // }
+
+  // remove(id: string) {
+  //   return `This action removes a #${id} post`
+  // }
 }
