@@ -71,6 +71,13 @@ export class PostController {
   async findById(@Res() res: Response, @Param('id') id: string) {
     try {
       const post = await this.postService.findById(id)
+      if (!post) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
       return res.status(StatusCodes.OK).json({
         data: { ...post },
         message: [ReasonPhrases.OK],
