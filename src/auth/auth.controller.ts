@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -90,5 +91,14 @@ export class AuthController {
         status: StatusCodes.BAD_REQUEST,
       })
     }
+  }
+
+  @Get('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Res() res: Response) {
+    return res
+      .cookie('accessToken', '', { ...cookieConfig, maxAge: 0 })
+      .status(StatusCodes.OK)
+      .json()
   }
 }
