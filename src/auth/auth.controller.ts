@@ -7,11 +7,18 @@ import {
   Res,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { Response } from 'express'
+import { CookieOptions, Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { AuthService } from './auth.service'
 import { AuthLoginDto } from './dto/auth-login.dto'
 import { AuthRegisterDto } from './dto/auth-register.dto'
+
+const cookieConfig = {
+  maxAge: 1000 * 60 * 60 * 24,
+  sameSite: 'lax',
+  secure: true,
+  httpOnly: true,
+} satisfies CookieOptions
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,11 +39,14 @@ export class AuthController {
         })
       }
 
-      return res.status(StatusCodes.OK).json({
-        data: { accessToken },
-        message: [ReasonPhrases.OK],
-        status: StatusCodes.OK,
-      })
+      return res
+        .cookie('accessToken', accessToken, { ...cookieConfig })
+        .status(StatusCodes.OK)
+        .json({
+          data: { accessToken },
+          message: [ReasonPhrases.OK],
+          status: StatusCodes.OK,
+        })
     } catch (error) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message: [ReasonPhrases.BAD_REQUEST],
@@ -66,11 +76,14 @@ export class AuthController {
         })
       }
 
-      return res.status(StatusCodes.OK).json({
-        data: { accessToken },
-        message: [ReasonPhrases.OK],
-        status: StatusCodes.OK,
-      })
+      return res
+        .cookie('accessToken', accessToken, { ...cookieConfig })
+        .status(StatusCodes.OK)
+        .json({
+          data: { accessToken },
+          message: [ReasonPhrases.OK],
+          status: StatusCodes.OK,
+        })
     } catch (error) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message: [ReasonPhrases.BAD_REQUEST],
