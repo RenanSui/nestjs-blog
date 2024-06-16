@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
@@ -34,9 +34,9 @@ export class ProfileController {
     })
   }
 
-  @Get()
+  @Get('/username/:username')
   async findByUsername(
-    @Body() { username }: Pick<Prisma.ProfileCreateInput, 'username'>,
+    @Param('username') username: string,
     @Res() res: Response,
   ) {
     try {
@@ -47,6 +47,32 @@ export class ProfileController {
           status: StatusCodes.NOT_FOUND,
         })
       }
+
+      return res.status(StatusCodes.OK).json({
+        data: { ...profile },
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
+
+  @Get('/id/:userId')
+  async findByUserId(@Param('userId') userId: string, @Res() res: Response) {
+    try {
+      const profile = await this.profileService.findByUserId(userId)
+      if (!profile) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
+      console.log(profile)
 
       return res.status(StatusCodes.OK).json({
         data: { ...profile },
