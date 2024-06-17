@@ -67,7 +67,7 @@ export class PostController {
     }
   }
 
-  @Get(':id')
+  @Get('id/:id')
   async findById(@Res() res: Response, @Param('id') id: string) {
     try {
       const post = await this.postService.findById(id)
