@@ -72,8 +72,6 @@ export class ProfileController {
         })
       }
 
-      console.log(profile)
-
       return res.status(StatusCodes.OK).json({
         data: { ...profile },
         message: [ReasonPhrases.OK],
