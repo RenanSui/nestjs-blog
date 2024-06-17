@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
+import { AuthGuard } from 'src/auth/auth.guard'
 import { ContextRequest, ProfileRequest } from 'src/types/request'
 import { ProfileService } from './profile.service'
 
@@ -16,6 +26,7 @@ export class ProfileController {
   }
 
   @Get('/me')
+  @UseGuards(AuthGuard)
   findMe(
     @Req() { context: { profile } }: ContextRequest<ProfileRequest>,
     @Res() res: Response,

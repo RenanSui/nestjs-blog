@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Req, Res } from '@nestjs/common'
+import { Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { ContextRequest, UserRequest } from 'src/types/request'
 import { UserService } from './user.service'
+import { AuthGuard } from 'src/auth/auth.guard'
 
 @Controller('user')
 export class UserController {
@@ -10,6 +11,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
+  @UseGuards(AuthGuard)
   findMe(@Req() req: ContextRequest<UserRequest>, @Res() res: Response) {
     const user = req.context.user
 
