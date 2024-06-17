@@ -31,6 +31,7 @@ export class ProfileMiddleware implements NestMiddleware {
 
       Object.assign(req, {
         context: {
+          user,
           profile,
           accessToken,
         },
