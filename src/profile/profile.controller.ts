@@ -1,8 +1,18 @@
-import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { ContextRequest, ProfileRequest } from 'src/types/request'
+import { ProfileGuard } from './profile.guard'
 import { ProfileService } from './profile.service'
 
 @Controller('profile')
@@ -85,20 +95,137 @@ export class ProfileController {
     }
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.profileService.findAll()
-  // }
+  @Post('update')
+  @UseGuards(ProfileGuard)
+  async updateProfile(
+    @Body() updateData: Prisma.ProfileUpdateInput & { userId?: string },
+    @Req() req: ContextRequest<ProfileRequest>,
+    @Res() res: Response,
+  ) {
+    const { profile } = req.context
+    try {
+      if (!profile) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message: ReasonPhrases.UNAUTHORIZED,
+          status: StatusCodes.UNAUTHORIZED,
+        })
+      }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.profileService.findOne(+id)
-  // }
+      await this.profileService.updateProfile(updateData)
+      return res.status(StatusCodes.OK).json({
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-  //   return this.profileService.update(+id, updateProfileDto)
-  // }
+  @Post('update/username')
+  @UseGuards(ProfileGuard)
+  async updateUsername(
+    @Body() updateData: Prisma.ProfileUpdateInput & { userId?: string },
+    @Req() req: ContextRequest<ProfileRequest>,
+    @Res() res: Response,
+  ) {
+    const { profile } = req.context
+    try {
+      if (!profile) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message: ReasonPhrases.UNAUTHORIZED,
+          status: StatusCodes.UNAUTHORIZED,
+        })
+      }
+
+      const username = updateData.username
+      if (typeof username !== 'string') {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: [ReasonPhrases.BAD_REQUEST],
+          status: StatusCodes.BAD_REQUEST,
+        })
+      }
+
+      const isProfileExist = await this.profileService.findByUsername(username)
+      if (isProfileExist) {
+        return res.status(StatusCodes.CONFLICT).json({
+          message: ReasonPhrases.CONFLICT,
+          status: StatusCodes.CONFLICT,
+        })
+      }
+
+      await this.profileService.updateUsername(updateData)
+      return res.status(StatusCodes.OK).json({
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
+
+  @Post('update/avatar')
+  @UseGuards(ProfileGuard)
+  async updateImage(
+    @Body() updateData: Prisma.ProfileUpdateInput & { userId?: string },
+    @Req() req: ContextRequest<ProfileRequest>,
+    @Res() res: Response,
+  ) {
+    const { profile } = req.context
+    try {
+      if (!profile) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message: ReasonPhrases.UNAUTHORIZED,
+          status: StatusCodes.UNAUTHORIZED,
+        })
+      }
+
+      await this.profileService.updateAvatar(updateData)
+      return res.status(StatusCodes.OK).json({
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
+
+  @Post('update/bio')
+  @UseGuards(ProfileGuard)
+  async updateBio(
+    @Body() updateData: Prisma.ProfileUpdateInput & { userId?: string },
+    @Req() req: ContextRequest<ProfileRequest>,
+    @Res() res: Response,
+  ) {
+    const { profile } = req.context
+    try {
+      if (!profile) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message: ReasonPhrases.UNAUTHORIZED,
+          status: StatusCodes.UNAUTHORIZED,
+        })
+      }
+
+      await this.profileService.updateBio(updateData)
+      return res.status(StatusCodes.OK).json({
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {
