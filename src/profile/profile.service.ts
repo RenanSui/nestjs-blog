@@ -11,6 +11,10 @@ export class ProfileService {
     return this.databaseService.profile.create({ data: createProfileDto })
   }
 
+  findById(id: string) {
+    return this.databaseService.profile.findUnique({ where: { id } })
+  }
+
   findByUserId(userId: string) {
     return this.databaseService.profile.findUnique({ where: { userId } })
   }
@@ -19,16 +23,79 @@ export class ProfileService {
     return this.databaseService.profile.findUnique({ where: { username } })
   }
 
-  // findAll() {
-  //   return `This action returns all profile`
-  // }
+  updateProfile({
+    id,
+    name,
+    userId,
+  }: Pick<Prisma.ProfileUpdateInput, 'id' | 'name'> & { userId?: string }) {
+    if (typeof id !== 'string') {
+      return null
+    }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} profile`
-  // }
+    return this.databaseService.profile.update({
+      data: { name },
+      where: { id, userId },
+    })
+  }
 
-  // update(id: number, updateProfileDto: Prisma.ProfileUpdateInput) {
-  //   return `This action updates a #${id} profile`
+  updateUsername({
+    id,
+    username,
+    userId,
+  }: Pick<Prisma.ProfileUpdateInput, 'id' | 'username'> & { userId?: string }) {
+    if (typeof id !== 'string') {
+      return null
+    }
+
+    return this.databaseService.profile.update({
+      data: { username },
+      where: { id, userId },
+    })
+  }
+
+  updateAvatar({
+    id,
+    image,
+    userId,
+  }: Pick<Prisma.ProfileUpdateInput, 'id' | 'image'> & { userId?: string }) {
+    if (typeof id !== 'string') {
+      return null
+    }
+
+    return this.databaseService.profile.update({
+      data: { image },
+      where: { id, userId },
+    })
+  }
+
+  updateBio({
+    id,
+    bio,
+    userId,
+  }: Pick<Prisma.ProfileUpdateInput, 'id' | 'bio'> & { userId?: string }) {
+    if (typeof id !== 'string') {
+      return null
+    }
+
+    return this.databaseService.profile.update({
+      data: { bio },
+      where: { id, userId },
+    })
+  }
+
+  // update({
+  //   id,
+  //   userId,
+  //   ...updateData
+  // }: Prisma.ProfileUpdateInput & { userId?: string }) {
+  //   if (typeof id !== 'string') {
+  //     return null
+  //   }
+
+  //   return this.databaseService.profile.update({
+  //     data: { ...updateData },
+  //     where: { id, userId },
+  //   })
   // }
 
   // remove(id: number) {
