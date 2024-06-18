@@ -25,12 +25,12 @@ export class PostService {
     return this.databaseService.post.findMany({ where: { authorId: userId } })
   }
 
-  // update(id: string, updatePostDto: Prisma.PostUpdateInput) {
-  //   return this.databaseService.post.update({
-  //     data: updatePostDto,
-  //     where: { id },
-  //   })
-  // }
+  update(body: Prisma.PostUpdateInput['body'], id: string, authorId: string) {
+    return this.databaseService.post.update({
+      data: { body },
+      where: { id, authorId },
+    })
+  }
 
   // remove(id: string) {
   //   return `This action removes a #${id} post`
