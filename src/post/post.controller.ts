@@ -54,6 +54,13 @@ export class PostController {
   async findAll(@Res() res: Response) {
     try {
       const posts = await this.postService.findAll()
+      if (!posts) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
       return res.status(StatusCodes.OK).json({
         data: [...posts],
         message: [ReasonPhrases.OK],
@@ -95,6 +102,13 @@ export class PostController {
   async postByUserId(@Res() res: Response, @Param('userId') userId: string) {
     try {
       const posts = await this.postService.postByUserId(userId)
+      if (!posts) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
       return res.status(StatusCodes.OK).json({
         data: [...posts],
         message: [ReasonPhrases.OK],
