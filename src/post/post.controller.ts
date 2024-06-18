@@ -121,13 +121,37 @@ export class PostController {
       })
     }
   }
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updatePostDto: Prisma.PostUpdateInput,
-  // ) {
-  //   return this.postService.update(+id, updatePostDto)
-  // }
+
+  @Post('update')
+  @UseGuards(AuthGuard)
+  async update(
+    @Body()
+    { id, authorId, body }: Prisma.PostUpdateInput & { authorId: string },
+    @Req() { context: { user } }: ContextRequest<UserRequest>,
+    @Res() res: Response,
+  ) {
+    try {
+      if (typeof id !== 'string' || user.id !== authorId) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message: ReasonPhrases.UNAUTHORIZED,
+          status: StatusCodes.UNAUTHORIZED,
+        })
+      }
+
+      const post = await this.postService.update(body, id, authorId)
+      return res.status(StatusCodes.OK).json({
+        data: { ...post },
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: ReasonPhrases.BAD_REQUEST,
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {
