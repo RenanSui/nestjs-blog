@@ -32,7 +32,7 @@ export class PostService {
     })
   }
 
-  // remove(id: string) {
-  //   return `This action removes a #${id} post`
-  // }
+  delete(id: string, authorId: string) {
+    return this.databaseService.post.delete({ where: { id, authorId } })
+  }
 }
