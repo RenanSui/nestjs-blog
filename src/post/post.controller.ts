@@ -153,8 +153,33 @@ export class PostController {
     }
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.postService.remove(+id)
-  // }
+  @Post('delete')
+  @UseGuards(AuthGuard)
+  async delete(
+    @Body()
+    { id, authorId }: Pick<Prisma.PostCreateInput, 'id'> & { authorId: string },
+    @Req() { context: { user } }: ContextRequest<UserRequest>,
+    @Res() res: Response,
+  ) {
+    try {
+      if (typeof id !== 'string' || user.id !== authorId) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message: ReasonPhrases.UNAUTHORIZED,
+          status: StatusCodes.UNAUTHORIZED,
+        })
+      }
+
+      await this.postService.delete(id, authorId)
+      return res.status(StatusCodes.OK).json({
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: ReasonPhrases.BAD_REQUEST,
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
 }
