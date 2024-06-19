@@ -21,8 +21,17 @@ export class PostService {
     return this.databaseService.post.findUnique({ where: { id } })
   }
 
-  postByUserId(userId: string) {
-    return this.databaseService.post.findMany({ where: { authorId: userId } })
+  findCountByUserId(authorId: string) {
+    return this.databaseService.post.count({ where: { authorId } })
+  }
+
+  postByUserId(userId: string, skip = 0, take = 7) {
+    return this.databaseService.post.findMany({
+      where: { authorId: userId },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take,
+    })
   }
 
   update(body: Prisma.PostUpdateInput['body'], id: string, authorId: string) {
