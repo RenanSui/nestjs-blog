@@ -82,23 +82,4 @@ export class ProfileService {
       where: { id, userId },
     })
   }
-
-  // update({
-  //   id,
-  //   userId,
-  //   ...updateData
-  // }: Prisma.ProfileUpdateInput & { userId?: string }) {
-  //   if (typeof id !== 'string') {
-  //     return null
-  //   }
-
-  //   return this.databaseService.profile.update({
-  //     data: { ...updateData },
-  //     where: { id, userId },
-  //   })
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} profile`
-  // }
 }
