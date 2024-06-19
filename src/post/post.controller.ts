@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { AuthGuard } from 'src/auth/auth.guard'
 import { ContextRequest, UserRequest } from 'src/types/request'
@@ -99,9 +99,18 @@ export class PostController {
   }
 
   @Get('user/:userId')
-  async postByUserId(@Res() res: Response, @Param('userId') userId: string) {
+  async postByUserId(
+    @Res() res: Response,
+    @Req() req: Request,
+    @Param('userId') userId: string,
+  ) {
     try {
-      const posts = await this.postService.postByUserId(userId)
+      const postCount = await this.postService.findCountByUserId(userId)
+      const skip = Number(req.query.skip) || 0
+      const take = Number(req.query.take) || 7
+      const hasNextPage = postCount > skip + take
+
+      const posts = await this.postService.postByUserId(userId, skip, take)
       if (!posts) {
         return res.status(StatusCodes.NOT_FOUND).json({
           message: [ReasonPhrases.NOT_FOUND],
@@ -111,6 +120,8 @@ export class PostController {
 
       return res.status(StatusCodes.OK).json({
         data: [...posts],
+        hasNextPage,
+        skip: skip + take,
         message: [ReasonPhrases.OK],
         status: StatusCodes.OK,
       })
