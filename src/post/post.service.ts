@@ -25,6 +25,21 @@ export class PostService {
     return this.databaseService.post.findUnique({ where: { id } })
   }
 
+  findBySearch(searchQuery: string, skip = 0, take = 7) {
+    return this.databaseService.post.findMany({
+      where: { body: { contains: searchQuery, mode: 'insensitive' } },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take,
+    })
+  }
+
+  findCountBySearch(searchQuery: string) {
+    return this.databaseService.post.count({
+      where: { body: { contains: searchQuery, mode: 'insensitive' } },
+    })
+  }
+
   findCount() {
     return this.databaseService.post.count()
   }
