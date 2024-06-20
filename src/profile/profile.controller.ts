@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { ContextRequest, ProfileRequest } from 'src/types/request'
 import { ProfileGuard } from './profile.guard'
@@ -42,6 +42,37 @@ export class ProfileController {
       message: [ReasonPhrases.OK],
       status: StatusCodes.OK,
     })
+  }
+
+  @Get('')
+  async findAll(@Req() req: Request, @Res() res: Response) {
+    try {
+      const profileCount = await this.profileService.findCount()
+      const skip = Number(req.query.skip) || 0
+      const take = Number(req.query.take) || 7
+      const hasNextPage = profileCount > skip + take
+
+      const profiles = await this.profileService.findAll(skip, take)
+      if (!profiles) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
+      return res.status(StatusCodes.OK).json({
+        data: [...profiles],
+        hasNextPage,
+        skip: skip + take,
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: [ReasonPhrases.BAD_REQUEST],
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
   }
 
   @Get('/username/:username')
