@@ -9,7 +9,7 @@ async function bootstrap() {
     cors: {
       origin: process.env.CLIENT_URL,
       credentials: true,
-      methods: ['GET', 'POST'],
+      methods: ['GET', 'POST', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       optionsSuccessStatus: StatusCodes.OK,
     },
