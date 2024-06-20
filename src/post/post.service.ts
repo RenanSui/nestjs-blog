@@ -13,12 +13,20 @@ export class PostService {
     })
   }
 
-  findAll() {
-    return this.databaseService.post.findMany()
+  findAll(skip = 0, take = 7) {
+    return this.databaseService.post.findMany({
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take,
+    })
   }
 
   findById(id: string) {
     return this.databaseService.post.findUnique({ where: { id } })
+  }
+
+  findCount() {
+    return this.databaseService.post.count()
   }
 
   findCountByUserId(authorId: string) {
