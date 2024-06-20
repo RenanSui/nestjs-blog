@@ -2,18 +2,24 @@ import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import * as cookieParser from 'cookie-parser'
+import { StatusCodes } from 'http-status-codes'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const configService = app.get(ConfigService)
 
-  app.enableCors()
+  app.enableCors({
+    origin: configService.get<string>('CLIENT_URL'),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type, Authorization'],
+    optionsSuccessStatus: StatusCodes.OK,
+  })
+
   app.use(cookieParser())
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe())
-
-  console.log(configService.get<string>('PORT'))
 
   await app.listen(configService.get<string>('PORT'))
 }
