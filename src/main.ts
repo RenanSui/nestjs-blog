@@ -13,6 +13,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe())
 
-  await app.listen(configService.get<string>('SERVER_PORT'))
+  console.log(configService.get<string>('PORT'))
+
+  await app.listen(configService.get<string>('PORT'))
 }
 bootstrap()
