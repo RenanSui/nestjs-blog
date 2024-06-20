@@ -51,9 +51,14 @@ export class PostController {
   }
 
   @Get()
-  async findAll(@Res() res: Response) {
+  async findAll(@Req() req: Request, @Res() res: Response) {
     try {
-      const posts = await this.postService.findAll()
+      const postCount = await this.postService.findCount()
+      const skip = Number(req.query.skip) || 0
+      const take = Number(req.query.take) || 7
+      const hasNextPage = postCount > skip + take
+
+      const posts = await this.postService.findAll(skip, take)
       if (!posts) {
         return res.status(StatusCodes.NOT_FOUND).json({
           message: [ReasonPhrases.NOT_FOUND],
@@ -63,6 +68,8 @@ export class PostController {
 
       return res.status(StatusCodes.OK).json({
         data: [...posts],
+        hasNextPage,
+        skip: skip + take,
         message: [ReasonPhrases.OK],
         status: StatusCodes.OK,
       })
