@@ -11,6 +11,14 @@ export class ProfileService {
     return this.databaseService.profile.create({ data: createProfileDto })
   }
 
+  findAll(skip = 0, take = 7) {
+    return this.databaseService.profile.findMany({ skip, take })
+  }
+
+  findCount() {
+    return this.databaseService.profile.count()
+  }
+
   findById(id: string) {
     return this.databaseService.profile.findUnique({ where: { id } })
   }
