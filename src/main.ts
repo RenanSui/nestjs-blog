@@ -14,6 +14,9 @@ async function bootstrap() {
     credentials: true,
     optionsSuccessStatus: StatusCodes.OK,
   })
+
+  console.log(configService.get<string>('CLIENT_URL'))
+
   app.use(cookieParser())
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe())
