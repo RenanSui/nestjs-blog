@@ -105,6 +105,40 @@ export class PostController {
     }
   }
 
+  @Get('search')
+  async findBySearch(@Res() res: Response, @Req() req: Request) {
+    try {
+      const searchQuery = req.query.searchQuery?.toString() || ''
+      const postCount = await this.postService.findCountBySearch(searchQuery)
+
+      const skip = Number(req.query.skip) || 0
+      const take = Number(req.query.take) || 7
+      const hasNextPage = postCount > skip + take
+
+      const posts = await this.postService.findBySearch(searchQuery, skip, take)
+
+      if (!posts) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: [ReasonPhrases.NOT_FOUND],
+          status: StatusCodes.NOT_FOUND,
+        })
+      }
+
+      return res.status(StatusCodes.OK).json({
+        data: [...posts],
+        hasNextPage,
+        skip: skip + take,
+        message: [ReasonPhrases.OK],
+        status: StatusCodes.OK,
+      })
+    } catch (error) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: ReasonPhrases.BAD_REQUEST,
+        status: StatusCodes.BAD_REQUEST,
+      })
+    }
+  }
+
   @Get('user/:userId')
   async postByUserId(
     @Res() res: Response,
