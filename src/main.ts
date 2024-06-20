@@ -11,6 +11,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: configService.get<string>('CLIENT_URL'),
+    methods: ['GET', 'POST'],
     credentials: true,
     optionsSuccessStatus: StatusCodes.OK,
   })
