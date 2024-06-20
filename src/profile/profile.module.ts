@@ -1,14 +1,13 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common'
-import { DatabaseModule } from 'src/database/database.module'
+import { DatabaseService } from 'src/database/database.service'
 import { UserService } from 'src/user/user.service'
 import { ProfileController } from './profile.controller'
-import { ProfileService } from './profile.service'
 import { ProfileMiddleware } from './profile.middleware'
+import { ProfileService } from './profile.service'
 
 @Module({
-  imports: [DatabaseModule],
   controllers: [ProfileController],
-  providers: [UserService, ProfileService],
+  providers: [UserService, DatabaseService, ProfileService],
 })
 export class ProfileModule {
   configure(consumer: MiddlewareConsumer) {
