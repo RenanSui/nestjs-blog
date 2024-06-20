@@ -10,6 +10,7 @@ async function bootstrap() {
       origin: process.env.CLIENT_URL,
       credentials: true,
       methods: ['GET', 'POST'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
       optionsSuccessStatus: StatusCodes.OK,
     },
   })
