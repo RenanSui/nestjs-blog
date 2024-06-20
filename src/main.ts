@@ -10,7 +10,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService)
 
   app.enableCors({
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.CLIENT_URL],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
