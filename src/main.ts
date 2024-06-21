@@ -13,7 +13,7 @@ async function bootstrap() {
     origin: configService.get<string>('CLIENT_URL'),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type, Authorization'],
+    allowedHeaders: ['Content-Type, Authorization, Cookies'],
     optionsSuccessStatus: StatusCodes.OK,
   })
 
