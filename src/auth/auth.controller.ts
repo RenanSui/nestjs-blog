@@ -16,7 +16,7 @@ import { AuthRegisterDto } from './dto/auth-register.dto'
 
 const cookieConfig = {
   maxAge: 1000 * 60 * 60 * 24,
-  sameSite: 'lax',
+  sameSite: 'none',
   secure: true,
   httpOnly: true,
 } satisfies CookieOptions
