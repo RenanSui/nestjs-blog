@@ -13,6 +13,14 @@ Bootstrapped with [`Nest CLI`](https://docs.nestjs.com/cli/overview).
 - **Framework:** [NestJS](https://docs.nestjs.com)
 - **ORM:** [Prisma ORM](https://www.prisma.io)
 
+## Features
+
+- Sign In
+- Sign Up
+- Update Profile
+- Update User Avatar
+- Create, Read, Update and Delete Posts.
+
 ## Installation
 
 ```bash
